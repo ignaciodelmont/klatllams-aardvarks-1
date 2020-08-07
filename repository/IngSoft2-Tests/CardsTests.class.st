@@ -163,6 +163,51 @@ CardsTests >> testCancellationCardAffectsAnotherCard [
 ]
 
 { #category : #tests }
+CardsTests >> testLibertyCardAffectsAPlayer [
+	| game playerOne playerTwo sequenceOne  diceOne spaces libertyCard |
+	sequenceOne := CircularIterator contains: #(1 1 1 2 1 5 3 1 6).
+
+	diceOne := Dice
+		faces: 10
+		ofType: (DeterministicType rolling: sequenceOne faces: 10).
+
+	playerOne := Player named: 'Carrot'.
+	playerTwo := Player named: 'Nacho'.
+	spaces := {
+	NoEffectSpace new.
+	JailSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new}.
+	game := Game
+		playedBy:
+			{playerOne.
+			playerTwo}
+		throwing:
+			{diceOne}
+		boardComposedBy: spaces
+		totalLaps: 2.
+	libertyCard := LibertyCard ownedBy: playerOne.
+	playerOne addNewCard: libertyCard.
+	self assert: (game hasTheTurn: playerOne).
+	game move: playerOne.
+	self assert: (game gameStatus positionOf: playerOne) equals: 2.
+	self assert: (game playerIsInJail: playerOne).
+	self assert: (game hasTheTurn: playerTwo).
+	game move: playerTwo.
+	game move: playerOne.
+	self assert: (game gameStatus positionOf: playerOne) equals: 2.
+	self assert: (game playerIsInJail: playerOne).
+	game move: playerTwo.
+	playerOne play: libertyCard  in: game  affecting: playerOne.
+	self assert: (game playerIsNotInJail: playerOne).
+	game move: playerOne.
+	self assert: (game gameStatus positionOf: playerOne) equals: 3.
+]
+
+{ #category : #tests }
 CardsTests >> testOverloadCardAffectsAPlayer [
 	| game playerOne playerTwo sequenceOne sequenceTwo diceOne diceTwo spaces card |
 	sequenceOne := CircularIterator contains: #(1 1 1 2 1 5 3 1 6).

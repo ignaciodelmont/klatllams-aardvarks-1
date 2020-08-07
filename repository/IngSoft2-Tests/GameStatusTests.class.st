@@ -10,11 +10,11 @@ GameStatusTests >> testIsPosibleToChangeAPlayerPositionAndUpdates [
 	playersCollection := #('hector' 'ignacio').
 	playersPosition := GameStatus players: playersCollection.
 	playersPosition updatePositionAndLapsOf: 'hector' to: 5 adding: 0.
-	self deny: playersPosition topPlayer = 'ignacio'.
+	self deny: playersPosition topPlayer equals: 'ignacio'.
 	self assert: playersPosition topPlayer equals: 'hector'.
 	playersPosition updatePositionAndLapsOf: 'ignacio' to: 10 adding: 0.
 	self assert: playersPosition topPlayer equals: 'ignacio'.
-	self deny: playersPosition topPlayer = 'hector'.
+	self deny: playersPosition topPlayer equals: 'hector'
 ]
 
 { #category : #tests }

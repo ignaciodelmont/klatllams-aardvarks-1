@@ -201,6 +201,16 @@ Game >> move: aPlayer [
 ]
 
 { #category : #accessing }
+Game >> playerIsInJail: aPlayer [
+	^ board playerIsInJail: aPlayer
+]
+
+{ #category : #accessing }
+Game >> playerIsNotInJail: aPlayer [
+	^ (self playerIsInJail: aPlayer) not.
+]
+
+{ #category : #accessing }
 Game >> releaseFromJail: aPlayer assertingMaxRoll: currentRoll [
 	currentRoll = self maxRoll
 		ifTrue: [ board releaseFromJail: aPlayer ].

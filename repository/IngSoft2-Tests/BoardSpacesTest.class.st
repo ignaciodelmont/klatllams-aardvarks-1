@@ -75,6 +75,82 @@ BoardSpacesTest >> testCardSpaceAssignsACardToAPlayer [
 ]
 
 { #category : #tests }
+BoardSpacesTest >> testJailSpaceSendsPlayerToJail [
+   | spaces players board card nacho carrot|
+	spaces := {CardSpace new.
+	CardSpace new.
+	CardSpace new.
+	CardSpace new.
+	CardSpace new.
+	JailSpace new} asOrderedCollection.
+	carrot := Player named: 'Carrot'.
+	nacho := Player named: 'Nacho'.
+	players := {carrot. nacho} asOrderedCollection .
+	board := Board playedBy: players composedBy: spaces.
+	board moveAndAffect: carrot by: 3.
+	board moveAndAffect: nacho by: 5.  
+	self
+		assert: (board playersInJail includes: nacho).
+	
+	board moveAndAffect: carrot by: 2.
+	board moveAndAffect: nacho by: 3.
+	
+   self 
+		assert: (board playersInJail includes: nacho);
+		assert: (board playersInJail includes: carrot);
+		assert: (board gameStatus positionOf: nacho ) equals: 6;
+		assert: (board gameStatus positionOf: carrot ) equals: 6.
+]
+
+{ #category : #tests }
+BoardSpacesTest >> testJailSpaceSendsPlayerToJailAndPlayerIsReleasedWithMaxRoll [
+	| game playerOne playerTwo sequenceOne  diceOne spaces |
+	sequenceOne := CircularIterator contains: #(1 1 1 2 10 5 3 1 6).
+	diceOne := Dice
+		faces: 10
+		ofType: (DeterministicType rolling: sequenceOne faces: 10).
+
+	playerOne := Player named: 'Carrot'.
+	playerTwo := Player named: 'Nacho'.
+	spaces := {
+	NoEffectSpace new.
+	JailSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new.
+	NoEffectSpace new}.
+	
+	game := Game playedBy: {playerOne.playerTwo} throwing: {diceOne} 
+				boardComposedBy: spaces 
+	   		   totalLaps: 2.
+	
+
+
+	game move: playerOne.
+	self assert: (game gameStatus positionOf: playerOne) equals: 2.
+	self assert: (game playerIsInJail: playerOne).
+
+	game move: playerTwo.
+	self assert: (game gameStatus positionOf: playerTwo) equals: 2.
+	self assert: (game playerIsInJail: playerTwo).
+	
+	game move: playerOne.
+	self assert: (game gameStatus positionOf: playerOne) equals: 2.
+	self assert: (game playerIsInJail: playerOne).
+	
+	game move: playerTwo.
+	self assert: (game gameStatus positionOf: playerTwo) equals: 2.
+	self assert: (game playerIsInJail: playerTwo).
+	
+	"Player One roll is maximum so it's released from Jail and moves"
+	game move: playerOne.
+	self deny: (game playerIsInJail: playerOne).
+	self assert: (game gameStatus positionOf: playerOne) equals: 5.
+
+]
+
+{ #category : #tests }
 BoardSpacesTest >> testSpeedUpHoleSpaceAndMoveAPlayerForwardsBy4 [
 	| board spaces |
 	spaces := {NoEffectSpace new.

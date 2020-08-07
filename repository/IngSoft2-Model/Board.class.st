@@ -99,12 +99,6 @@ Board >> add: anActiveCard [
 	activeCards add: anActiveCard 
 ]
 
-{ #category : #updating }
-Board >> assertPlayerInJail: aPlayer [
-	(self playerIsInJail: aPlayer)
-	ifFalse: [ ^self ].
-]
-
 { #category : #accessing }
 Board >> gameStatus [
 	^ gameStatus
@@ -166,6 +160,11 @@ Board >> players [
 	^ gameStatus players.
 ]
 
+{ #category : #accessing }
+Board >> playersInJail [
+	^ playersInJail 
+]
+
 { #category : #updating }
 Board >> putInJail: aPlayer [
 	playersInJail add: aPlayer.
@@ -173,8 +172,7 @@ Board >> putInJail: aPlayer [
 
 { #category : #updating }
 Board >> releaseFromJail: aPlayer [ 
-	self assertPlayerInJail: aPlayer.
-	playersInJail remove: aPlayer.
+	playersInJail remove: aPlayer ifAbsent: [^self].
 ]
 
 { #category : #updating }
